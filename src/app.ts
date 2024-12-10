@@ -10,6 +10,7 @@ const client = new Client({
 client.config = Devs;
 client.events = new Collection();
 client.commands = new Collection();
+client.buttons = new Collection();
 handleEvents(client);
 
 client.login(envs.DISCORD_TOKEN);

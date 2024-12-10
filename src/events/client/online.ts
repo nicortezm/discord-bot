@@ -1,5 +1,5 @@
 import { Event } from '../../interfaces';
-import { handleCommands } from '../../handlers';
+import { handleButtons, handleCommands } from '../../handlers';
 
 export const event: Event<'ready'> = {
   name: 'ready',
@@ -8,5 +8,6 @@ export const event: Event<'ready'> = {
     console.log(`[CLIENT] ${client.user.username} is online`);
 
     handleCommands(client);
+    handleButtons(client);
   },
 };
