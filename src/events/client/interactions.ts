@@ -16,6 +16,11 @@ export const event: Event<'interactionCreate'> = {
         });
 
       command.execute(client, interaction);
+    } else if (interaction.isButton()) {
+      const buttonInfo = interaction.customId.split('_');
+      const button = client.buttons.get(buttonInfo[0]);
+      if (!button) return;
+      button.execute(client, interaction, ...buttonInfo.slice(1));
     }
   },
 };
