@@ -1,8 +1,4 @@
-import {
-  EmbedBuilder,
-  InteractionContextType,
-  SlashCommandBuilder,
-} from 'discord.js';
+import { EmbedBuilder, SlashCommandBuilder } from 'discord.js';
 import { Command } from '../../interfaces';
 import { envs } from '../../config';
 import { AzureService } from '../../services';
@@ -12,9 +8,8 @@ const ALLOWED_ROLE_ID = envs.ALLOWED_ROLE_ID;
 
 export const command: Command = {
   data: new SlashCommandBuilder()
-    .setName('start')
-    .setContexts(InteractionContextType.Guild)
-    .setDescription('Iniciar servidor de minecraft'),
+    .setName('stop')
+    .setDescription('Apagar servidor de minecraft'),
 
   async execute(client, interaction) {
     if (!interaction.inCachedGuild()) return;
@@ -53,64 +48,58 @@ export const command: Command = {
     await interaction.reply({
       embeds: [embed],
     });
+
     // Paso 2: Comprobar el estado de la VM (Azure)
     const vmStatus = await AzureService.getStatusVM();
+    console.log(vmStatus);
     if (!vmStatus) {
-      description +=
-        '⚙️ La máquina virtual está offline.\n🚀 Encendiendo máquina virtual.\n';
+      description += '✅ La máquina virtual está offline.\n';
       await interaction.editReply({
-        embeds: [embed.setDescription(description).setColor('Aqua')],
+        embeds: [embed.setDescription(description).setColor('Red')],
       });
-      const startVM = await AzureService.startVM();
-      if (!startVM) {
-        description += '❌ La máquina virtual no se ha podido iniciar\n';
-        await interaction.editReply({
-          embeds: [embed.setDescription(description).setColor('Red')],
-        });
-        return;
-      }
+      return;
     }
 
-    // Si la VM está online, mostramos el estado de la máquina virtual
-    description += '🖥️ Maquina Virtual Online ✅\n';
-    embed.setDescription(description);
-    embed.setColor('Green');
-
+    description += '🔌 Apagando el servidor de minecraft.\n';
     await interaction.editReply({
-      embeds: [embed],
+      embeds: [embed.setDescription(description).setColor('Red')],
     });
 
-    // Paso 3: Comprobar el estado del servidor de Minecraft
-    const minecraftStatus = await AzureService.getMinecraftStatus();
+    const stopMcServer = await AzureService.stopMinecraftServer();
+    if (!stopMcServer) {
+      description += '❌ No fue posible apagar el servidor.';
+      await interaction.editReply({
+        embeds: [embed.setDescription(description).setColor('Red')],
+      });
+      return;
+    }
 
-    if (!minecraftStatus) {
+    description += '⏳ Apagando máquina virtual.\n';
+    await interaction.editReply({
+      embeds: [embed.setDescription(description).setColor('Red')],
+    });
+
+    const shutdownVM = await AzureService.shutdownVM();
+    if (!shutdownVM) {
+      description += '❌ Error al apagar máquina virtual.';
       await interaction.editReply({
         embeds: [
-          embed
-            .setDescription(
-              '❌ El servidor de Minecraft está offline. No se puede continuar.\n'
-            )
-            .setColor('Red'),
+          embed.setDescription(description).setColor('Red').setFooter({
+            text: '❌ Proceso Fallido',
+          }),
         ],
       });
       return;
     }
 
-    // Si el servidor de Minecraft está online, mostramos el estado del servidor
-    description += '🎮 Servidor de Minecraft Online ✅\n';
-    embed.setDescription(description);
-
+    description += '✅ Máquina virtual apagada.';
     await interaction.editReply({
-      embeds: [embed],
-    });
-
-    embed.setFooter({
-      text: 'Proceso completado',
-      iconURL: 'https://cdn3.emoji.gg/emojis/1779_check.png',
-    });
-    // Actualizamos el mensaje final con todos los datos
-    await interaction.editReply({
-      embeds: [embed],
+      embeds: [
+        embed.setDescription(description).setColor('Green').setFooter({
+          text: 'Proceso completado',
+          iconURL: 'https://cdn3.emoji.gg/emojis/1779_check.png',
+        }),
+      ],
     });
   },
 };
