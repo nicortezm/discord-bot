@@ -12,15 +12,19 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@azure/arm-compute": "^22.1.0",
+    "@azure/identity": "^4.5.0",
     "discord.js": "^14.16.3",
     "dotenv": "^16.4.7",
     "env-var": "^7.5.0",
     "kazagumo": "^3.2.1",
     "shoukaku": "^4.1.1",
+    "ssh2": "^1.16.0",
     "tablifier": "^1.2.2"
   },
   "devDependencies": {
     "@types/node": "^22.10.1",
+    "@types/ssh2": "^1.15.1",
     "rimraf": "^6.0.1",
     "ts-node": "^10.9.2",
     "ts-node-dev": "^2.0.0",
