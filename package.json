@@ -19,8 +19,7 @@
     "env-var": "^7.5.0",
     "kazagumo": "^3.2.1",
     "shoukaku": "^4.1.1",
-    "ssh2": "^1.16.0",
-    "tablifier": "^1.2.2"
+    "ssh2": "^1.16.0"
   },
   "devDependencies": {
     "@types/node": "^22.10.1",
