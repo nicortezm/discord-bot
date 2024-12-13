@@ -4,7 +4,7 @@ import { Command } from '../../interfaces';
 export const command: Command = {
   data: new SlashCommandBuilder()
     .setName('skip')
-    .setDescription('Skip the current song'),
+    .setDescription('Skipea la canción actual'),
 
   async execute(client, interaction) {
     if (!interaction.inCachedGuild()) return;
@@ -13,7 +13,8 @@ export const command: Command = {
 
     if (!channel) {
       return interaction.reply({
-        content: 'You need to be in a voice channel to use this command.',
+        content:
+          'Necesitas estar en un Chat de voz para ejecutar este comando.',
         ephemeral: true,
       });
     }
@@ -22,7 +23,7 @@ export const command: Command = {
 
     if (!player) {
       return interaction.reply({
-        content: 'There is no music playing.',
+        content: 'No hay música reproduciendose.',
         ephemeral: true,
       });
     }
@@ -31,15 +32,14 @@ export const command: Command = {
 
     if (!currentTrack) {
       return interaction.reply({
-        content: 'There is no song currently playing.',
+        content: 'No hay música reproduciendose.',
         ephemeral: true,
       });
     }
 
     // Obtener URL y thumbnail de la canción
     const trackUrl = currentTrack.uri || ''; // URL del video
-    const trackThumbnail =
-      currentTrack.thumbnail || 'https://default-thumbnail.jpg'; // Thumbnail de la canción, si no existe, poner un predeterminado
+    const trackThumbnail = currentTrack.thumbnail || ''; // Thumbnail de la canción, si no existe, poner un predeterminado
 
     // Verificar si hay más canciones en la cola
     const hasNextTrack = player.queue.size > 0;
@@ -50,12 +50,12 @@ export const command: Command = {
     // Crear el embed con el thumbnail
     const embed = new EmbedBuilder()
       .setColor('Random')
-      .setTitle('Song Skipped')
+      .setTitle('Canción skipeada')
       .setDescription(`⏭️ Skipped **${currentTrack.title}**`)
       .setURL(trackUrl) // Agregar URL del video
       .setThumbnail(trackThumbnail) // Carátula de la canción
       .setFooter({
-        text: `Now playing: ${
+        text: `Reproduciendo ahora: ${
           hasNextTrack ? player.queue.at(0)?.title : 'No more tracks'
         }`,
       });

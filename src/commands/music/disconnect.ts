@@ -6,7 +6,7 @@ import { Command } from '../../interfaces';
 export const command: Command = {
   data: new SlashCommandBuilder()
     .setName('disconnect')
-    .setDescription('Disconnect the bot from the voice channel'),
+    .setDescription('Desconectar al bot del canal de voz'),
 
   async execute(client, interaction) {
     if (!interaction.inCachedGuild()) return;
@@ -15,7 +15,8 @@ export const command: Command = {
 
     if (!channel) {
       return interaction.reply({
-        content: 'You need to be in a voice channel to use this command.',
+        content:
+          'Necesitas estar en un Chat de voz para ejecutar este comando.',
         ephemeral: true,
       });
     }
@@ -24,7 +25,7 @@ export const command: Command = {
 
     if (!player) {
       return interaction.reply({
-        content: 'There is no music playing.',
+        content: 'No hay música reproduciendose.',
         ephemeral: true,
       });
     }
@@ -38,9 +39,7 @@ export const command: Command = {
       // Crear el embed para notificar la desconexión
       const embed = new EmbedBuilder()
         .setColor('Random')
-        .setDescription(
-          '🛑 The bot has been disconnected from the voice channel.'
-        );
+        .setDescription('🛑 Se ha desconectado el bot del canal de voz.');
 
       await interaction.reply({ embeds: [embed] });
     } catch (error) {
@@ -50,7 +49,7 @@ export const command: Command = {
       );
       return interaction.reply({
         content:
-          'There was an error while disconnecting the bot. Please try again later.',
+          'Ha ocurrido un error al desconectar el bot, porfavor intenta nuevamente',
         ephemeral: true,
       });
     }

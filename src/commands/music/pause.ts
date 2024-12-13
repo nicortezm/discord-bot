@@ -8,7 +8,7 @@ import { Command } from '../../interfaces';
 export const command: Command = {
   data: new SlashCommandBuilder()
     .setName('pause')
-    .setDescription('Pause or resume the current song'),
+    .setDescription('Pausa o reanuda la música'),
 
   async execute(client, interaction) {
     if (!interaction.inCachedGuild()) return;
@@ -17,7 +17,8 @@ export const command: Command = {
 
     if (!channel) {
       return interaction.reply({
-        content: 'You need to be in a voice channel to use this command.',
+        content:
+          'Necesitas estar en un Chat de voz para ejecutar este comando.',
         ephemeral: true,
       });
     }
@@ -26,7 +27,7 @@ export const command: Command = {
 
     if (!player) {
       return interaction.reply({
-        content: 'There is no music playing.',
+        content: 'No hay música reproduciendose.',
         ephemeral: true,
       });
     }
@@ -36,7 +37,7 @@ export const command: Command = {
 
       const embed = new EmbedBuilder()
         .setColor('Random')
-        .setDescription('▶️ Resumed the music');
+        .setDescription('▶️ Música reanudada');
 
       await interaction.reply({ embeds: [embed] });
     } else {
@@ -44,7 +45,7 @@ export const command: Command = {
 
       const embed = new EmbedBuilder()
         .setColor('Random')
-        .setDescription('⏸️ Paused the music');
+        .setDescription('⏸️ Música pausada');
 
       await interaction.reply({ embeds: [embed] });
     }
