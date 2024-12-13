@@ -4,7 +4,6 @@ import { get } from 'env-var';
 export const envs = {
   // Configuración de Discord
   DISCORD_TOKEN: get('DISCORD_TOKEN').required().asString(),
-  DISCORD_CLIENT_ID: get('DISCORD_CLIENT_ID').required().asString(),
   LAVALINK_IP: get('LAVALINK_IP').required().asString(),
   LAVALINK_PORT: get('LAVALINK_PORT').required().asPortNumber(),
   LAVALINK_PASSWORD: get('LAVALINK_PASSWORD').required().asString(),
