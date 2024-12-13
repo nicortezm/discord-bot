@@ -25,9 +25,9 @@ client.login(envs.DISCORD_TOKEN);
 const Nodes = [
   {
     name: 'main',
-    url: '13.58.63.36:2333',
-    auth: 'youshallnotpass',
-    secure: false,
+    url: `${envs.LAVALINK_IP}:${envs.LAVALINK_PORT}`,
+    auth: envs.LAVALINK_PASSWORD,
+    secure: envs.LAVALINK_SECURE,
   },
 ];
 
