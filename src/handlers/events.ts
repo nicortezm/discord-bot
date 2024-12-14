@@ -1,9 +1,8 @@
-import { Table } from 'tablifier';
+
 import { Event, GlobClient } from '../interfaces';
 import { loadFiles } from '../lib';
 
 export async function handleEvents(client: GlobClient): Promise<void> {
-  const table = new Table('Event Name', 'Status');
 
   client.events.clear();
 
@@ -20,10 +19,8 @@ export async function handleEvents(client: GlobClient): Promise<void> {
         if (event.once) client.once(event.name, execute);
         else client.on(event.name, execute);
       }
-      table.addRow(event.name, 'Done');
+     
     } catch (error) {
-      table.addRow(event.name, 'Error');
     }
   });
-  console.log(table.toString());
 }

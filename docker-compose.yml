@@ -2,12 +2,12 @@ services:
   discord-bot:
     image: node:22.11.0
     container_name: discord-bot
-    working_dir: /app
+    working_dir: /app  # El directorio de trabajo es /app, que contendrá tanto el código fuente como los archivos compilados
     volumes:
-      - .:/app
+      - .:/app  # Montamos todo el directorio del proyecto en /app
     ports:
-      - '3000:3000' # Ajusta el puerto según sea necesario
-    command: sh -c "npm install && npm run start" #
+      - "3000:3000"  # Ajusta el puerto según sea necesario
+    command: sh -c "npm install"  # Ejecutamos el build y luego el bot desde dist
     networks:
       - discord-bot-network
     restart: unless-stopped
