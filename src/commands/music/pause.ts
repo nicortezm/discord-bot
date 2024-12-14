@@ -1,33 +1,32 @@
 import {
   EmbedBuilder,
   SlashCommandBuilder,
-  InteractionContextType,
-} from 'discord.js';
-import { Command } from '../../interfaces';
+} from "discord.js";
+import { Command } from "../../interfaces";
 
 export const command: Command = {
   data: new SlashCommandBuilder()
-    .setName('pause')
-    .setDescription('Pausa o reanuda la música'),
+    .setName("pause")
+    .setDescription("Pausa o reanuda la música"),
 
-  async execute(client, interaction) {
-    if (!interaction.inCachedGuild()) return;
+  async execute(client, ctx) {
+    if (!ctx.interaction?.inCachedGuild()) return;
 
-    const { channel } = interaction.member.voice;
+    const { channel } = ctx.interaction.member.voice;
 
     if (!channel) {
-      return interaction.reply({
+      return ctx.sendMessage({
         content:
-          'Necesitas estar en un Chat de voz para ejecutar este comando.',
+          "Necesitas estar en un Chat de voz para ejecutar este comando.",
         ephemeral: true,
       });
     }
 
-    const player = client.manager?.players.get(interaction.guild.id);
+    const player = client.manager?.players.get(ctx.interaction.guild.id);
 
     if (!player) {
-      return interaction.reply({
-        content: 'No hay música reproduciendose.',
+      return ctx.sendMessage({
+        content: "No hay música reproduciendose.",
         ephemeral: true,
       });
     }
@@ -36,18 +35,18 @@ export const command: Command = {
       player.pause(false);
 
       const embed = new EmbedBuilder()
-        .setColor('Random')
-        .setDescription('▶️ Música reanudada');
+        .setColor("Random")
+        .setDescription("▶️ Música reanudada");
 
-      await interaction.reply({ embeds: [embed] });
+      await ctx.sendMessage({ embeds: [embed] });
     } else {
       player.pause(true);
 
       const embed = new EmbedBuilder()
-        .setColor('Random')
-        .setDescription('⏸️ Música pausada');
+        .setColor("Random")
+        .setDescription("⏸️ Música pausada");
 
-      await interaction.reply({ embeds: [embed] });
+      await ctx.sendMessage({ embeds: [embed] });
     }
   },
 };

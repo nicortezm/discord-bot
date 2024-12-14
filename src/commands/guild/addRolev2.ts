@@ -15,7 +15,7 @@ export const command: Command = {
     .setContexts(InteractionContextType.Guild)
     .setDefaultMemberPermissions(PermissionFlagsBits.ManageRoles),
   developer: true,
-  async execute(client, interaction) {
+  async execute(client, ctx) {
     const rowButtons = new ActionRowBuilder<ButtonBuilder>().addComponents(
       new ButtonBuilder()
         .setCustomId('add-role-v2_1261875412829470743') // ID rol
@@ -23,7 +23,7 @@ export const command: Command = {
         .setStyle(ButtonStyle.Primary)
     );
 
-    await interaction.reply({
+    await ctx.sendMessage({
       content: 'Want to get a new role?',
       components: [rowButtons],
     });
