@@ -31,7 +31,7 @@ export const command: Command = {
   async execute(client, interaction) {
     if (!interaction.inCachedGuild()) return; // solo se puede usar en un server
     if (!interaction.guild.members.me) return; // no se puede ejecutar este comando en este sv
-    const search = interaction.options.getString('search') ?? '';
+    const search = interaction.options.getString('buscar') ?? '';
     const { channel } = interaction.member.voice;
     if (!channel) {
       return interaction.reply({
