@@ -40,10 +40,11 @@ jobs:
           if docker ps -a --format '{{.Names}}' | grep -w ${{github.event.repository.name}}; then
             docker stop ${{github.event.repository.name}} && docker rm ${{github.event.repository.name}}
           fi
+
           docker run -d \
             --name ${{github.event.repository.name}} \
             -p 3000:3000 \
-            -v $(pwd)/keys:/app \
+            -v $(pwd)/keys:/app/keys \
             -w /app \
             --restart always \
             --env-file .env \
