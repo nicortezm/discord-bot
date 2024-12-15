@@ -2,7 +2,7 @@ name: Build and Deploy
 
 on:
   push:
-    branches: ["development"]
+    branches: ["main"]
 
 jobs:
   create-docker-image:
@@ -47,5 +47,5 @@ jobs:
             -w /app \
             --restart always \
             --env-file .env \
-            ghcr.io/${{ github.repository }}:latest          
-
+            ghcr.io/${{ github.repository }}:latest
+          docker cp keys/ ${{github.event.repository.name}}:/app/keys
