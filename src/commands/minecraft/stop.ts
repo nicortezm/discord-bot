@@ -15,6 +15,7 @@ export const command: Command = {
     if (!interaction.inCachedGuild()) return;
     // validar chanel.id y member.roles.cache.has(ALLOWED_ROLE_ID)
     if (!interaction.member) return;
+    console.log(`${ALLOWED_ROLE_ID} || ${interaction.channelId}`)
     if (interaction.channelId !== ALLOWED_CHANNEL_ID) {
       await interaction.reply({
         content: 'Este comando solo se puede ejecutar en un canal específico.',
