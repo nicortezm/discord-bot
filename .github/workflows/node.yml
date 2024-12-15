@@ -40,12 +40,5 @@ jobs:
           if docker ps -a --format '{{.Names}}' | grep -w ${{github.event.repository.name}}; then
             docker stop ${{github.event.repository.name}} && docker rm ${{github.event.repository.name}}
           fi
+          
 
-          docker run -d \
-            --name ${{github.event.repository.name}} \
-            -p 3001:3001 \
-            -v $(pwd)/${{ github.repository }}/keys:/app/keys \
-            -w /${{github.event.repository.name}} \
-            --restart always \
-            --env-file .env \
-            ghcr.io/${{ github.repository }}:latest

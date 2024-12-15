@@ -30,7 +30,7 @@ COPY --from=builder /app/package*.json ./
 RUN npm ci --only=production
 
 # Exponer puerto (ajustar según tu aplicación)
-EXPOSE 3001
+EXPOSE 3000
 
 # Comando para iniciar la aplicación
 CMD ["npm", "start"]
