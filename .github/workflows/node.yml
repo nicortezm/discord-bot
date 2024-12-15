@@ -43,9 +43,8 @@ jobs:
           docker run -d \
             --name ${{github.event.repository.name}} \
             -p 3000:3000 \
-            -v $(pwd)/keys:/app/keys \
+            -v $(pwd)/keys:/app \
             -w /app \
             --restart always \
             --env-file .env \
             ghcr.io/${{ github.repository }}:latest
-          docker cp keys/ ${{github.event.repository.name}}:/app/keys
