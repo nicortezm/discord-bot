@@ -44,7 +44,7 @@ jobs:
           docker run -d \
             --name ${{github.event.repository.name}} \
             -p 3001:3001 \
-            -v $(pwd)/${{github.event.repository.name}}:/app/${{github.event.repository.name}} \
+            -v $(pwd)/${{github.event.repository.name}}:/${{github.event.repository.name}}/${{github.event.repository.name}} \
             -w /${{github.event.repository.name}} \
             --restart always \
             --env-file .env \
