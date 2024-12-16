@@ -13,13 +13,14 @@ export const command: Command = {
         .setRequired(true)
     ),
 
-  async execute(client, interaction) {
-    const messageOption = interaction.options.getString('mensaje', true);
+  async execute(client, ctx): Promise<any> {
+    const messageOption = ctx.options.get('mensaje')?.value as string;
 
-    if (interaction.channel?.isSendable()) {
-      await interaction.channel.send(messageOption);
+    if (ctx.interaction?.channel?.isSendable()) {
+      await ctx.interaction.channel.send({ content: messageOption });
     }
-    await interaction.reply({
+
+    return await ctx.sendMessage({
       content: 'Tu mensaje se ha enviado correctamente.',
       ephemeral: true,
     });

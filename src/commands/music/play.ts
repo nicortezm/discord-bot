@@ -28,44 +28,44 @@ export const command: Command = {
         .setRequired(true)
     ),
 
-  async execute(client, interaction) {
-    if (!interaction.inCachedGuild()) return; // solo se puede usar en un server
-    if (!interaction.guild.members.me) return; // no se puede ejecutar este comando en este sv
-    const search = interaction.options.getString('buscar') ?? '';
-    const { channel } = interaction.member.voice;
+  async execute(client, ctx) {
+    if (!ctx.interaction?.inCachedGuild()) return; // solo se puede usar en un server
+    if (!ctx.interaction.guild.members.me) return; // no se puede ejecutar este comando en este sv
+    const search = ctx.options.get('buscar')?.value as string ?? '';
+    const { channel } = ctx.interaction.member.voice;
     if (!channel) {
-      return interaction.reply({
+      return ctx.sendMessage({
         content: 'Necesitas estar en un canal de voz',
         ephemeral: true,
       });
     }
-    if (!interaction.guild) return;
-    if (!interaction.channel) return;
+    if (!ctx.interaction.guild) return;
+    if (!ctx.interaction.channel) return;
     if (
       !channel
-        .permissionsFor(interaction.guild.members.me)
+        .permissionsFor(ctx.interaction.guild.members.me)
         .has(PermissionsBitField.Flags.Connect)
     ) {
-      return interaction.reply({
+      return ctx.sendMessage({
         content: 'No tengo permisos para entrar a tu canal de voz',
         ephemeral: true,
       });
     }
 
-    await interaction.reply({ content: 'Buscando...' });
+    await ctx.sendMessage({ content: 'Buscando...' });
 
     const player = await client.manager?.createPlayer({
-      guildId: interaction.guild.id,
+      guildId: ctx.interaction.guild.id,
       voiceId: channel.id,
-      textId: interaction.channel.id,
+      textId: ctx.interaction.channel.id,
       volume: 100,
       deaf: true,
     });
 
-    const res = await player?.search(search, { requester: interaction.user });
+    const res = await player?.search(search, { requester: ctx.interaction.user });
     if (!player) return;
     if (!res?.tracks.length) {
-      return interaction.editReply('No encontré resultados');
+      return ctx.editMessage('No encontré resultados');
     }
     if (res.type === 'PLAYLIST') {
       for (let track of res.tracks) {
@@ -92,7 +92,7 @@ export const command: Command = {
             hasNextTrack ? player.queue.at(0)?.title : 'No hay más canciones'
           }`,
         });
-      return interaction.editReply({ content: '', embeds: [embed] });
+      return ctx.editMessage({ content: '', embeds: [embed] });
     } else {
       player?.queue.add(res.tracks[0]);
       if (!player?.playing && !player?.paused) {
@@ -107,7 +107,7 @@ export const command: Command = {
         .setFooter({
           text: `Siguiente canción: Ninguna`,
         });
-      return interaction.editReply({ content: '', embeds: [embed] });
+      return ctx.editMessage({ content: '', embeds: [embed] });
     }
   },
 };

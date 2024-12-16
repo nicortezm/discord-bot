@@ -1,4 +1,5 @@
 import { Event } from '../../interfaces';
+import Context from '../../lib/context';
 
 export const event: Event<'interactionCreate'> = {
   name: 'interactionCreate',
@@ -15,7 +16,9 @@ export const event: Event<'interactionCreate'> = {
           content: 'This command is only available for devs',
         });
 
-      command.execute(client, interaction);
+      const ctx = new Context(interaction, [])
+
+      command.execute(client, ctx);
     } else if (interaction.isButton()) {
       const buttonInfo = interaction.customId.split('_');
       const button = client.buttons.get(buttonInfo[0]);

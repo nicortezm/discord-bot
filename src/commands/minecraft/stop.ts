@@ -11,13 +11,12 @@ export const command: Command = {
     .setName("stop")
     .setDescription("Apagar servidor de minecraft"),
 
-  async execute(client, interaction) {
-    if (!interaction.inCachedGuild()) return;
+  async execute(client, ctx) {
+    if (!ctx.interaction?.inCachedGuild()) return;
     // validar chanel.id y member.roles.cache.has(ALLOWED_ROLE_ID)
-    if (!interaction.member) return;
-    console.log(`${ALLOWED_CHANNEL_ID} || ${interaction.channelId}`);
-    if (interaction.channelId !== ALLOWED_CHANNEL_ID) {
-      await interaction.reply({
+    if (!ctx.interaction.member) return;
+    if (ctx.interaction.channelId !== ALLOWED_CHANNEL_ID) {
+      await ctx.sendMessage({
         content: "Este comando solo se puede ejecutar en un canal específico.",
         ephemeral: true, // Solo visible para el usuario que ejecuta el comando
       });
@@ -25,8 +24,8 @@ export const command: Command = {
     }
 
     // Validación de rol
-    if (!interaction.member?.roles.cache.has(ALLOWED_ROLE_ID)) {
-      await interaction.reply({
+    if (!ctx.interaction.member?.roles.cache.has(ALLOWED_ROLE_ID)) {
+      await ctx.sendMessage({
         content:
           "No tienes los permisos necesarios para ejecutar este comando.",
         ephemeral: true,
@@ -38,7 +37,7 @@ export const command: Command = {
     const embed = new EmbedBuilder()
       .setTitle("🌐 ** Minecraft Server** 🌐")
       .setColor("Blurple")
-      .setThumbnail(interaction.guild?.iconURL() || "")
+      .setThumbnail(ctx.interaction.guild?.iconURL() || "")
       .setDescription(description)
       .setFooter({
         text: "Validando",
@@ -46,7 +45,7 @@ export const command: Command = {
           "https://raw.githubusercontent.com/Codelessly/FlutterLoadingGIFs/master/packages/cupertino_activity_indicator_large.gif",
       });
 
-    await interaction.reply({
+    await ctx.sendMessage({
       embeds: [embed],
     });
 
@@ -55,35 +54,35 @@ export const command: Command = {
     console.log(vmStatus);
     if (!vmStatus) {
       description += "✅ La máquina virtual está offline.\n";
-      await interaction.editReply({
+      await ctx.editMessage({
         embeds: [embed.setDescription(description).setColor("Red")],
       });
       return;
     }
 
     description += "🔌 Apagando el servidor de minecraft.\n";
-    await interaction.editReply({
+    await ctx.editMessage({
       embeds: [embed.setDescription(description).setColor("Red")],
     });
 
     const stopMcServer = await AzureService.stopMinecraftServer();
     if (!stopMcServer) {
       description += "❌ No fue posible apagar el servidor.";
-      await interaction.editReply({
+      await ctx.editMessage({
         embeds: [embed.setDescription(description).setColor("Red")],
       });
       return;
     }
 
     description += "⏳ Apagando máquina virtual.\n";
-    await interaction.editReply({
+    await ctx.editMessage({
       embeds: [embed.setDescription(description).setColor("Red")],
     });
 
     const shutdownVM = await AzureService.shutdownVM();
     if (!shutdownVM) {
       description += "❌ Error al apagar máquina virtual.";
-      await interaction.editReply({
+      await ctx.editMessage({
         embeds: [
           embed.setDescription(description).setColor("Red").setFooter({
             text: "❌ Proceso Fallido",
@@ -94,7 +93,7 @@ export const command: Command = {
     }
 
     description += "✅ Máquina virtual apagada.";
-    await interaction.editReply({
+    await ctx.editMessage({
       embeds: [
         embed.setDescription(description).setColor("Green").setFooter({
           text: "Proceso completado",
