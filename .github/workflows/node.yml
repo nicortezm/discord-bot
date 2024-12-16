@@ -1,0 +1,51 @@
+name: Build and Deploy
+
+on:
+  push:
+    branches: ["main"]
+
+jobs:
+  create-docker-image:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the code
+        uses: actions/checkout@v2
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.TOKEN_CD }}
+
+      - name: Build the bot_test Docker image
+        run: |
+          docker build . --tag ghcr.io/${{ github.repository }}:latest
+          docker push ghcr.io/${{ github.repository }}:latest
+
+  deploy:
+    needs: create-docker-image
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install sshpass
+        run: sudo apt-get install -y sshpass
+
+      - name: SSH into Server
+        run: |
+          sshpass -p ${{ secrets.AUTH_PASS }} ssh -o StrictHostKeyChecking=no ${{ secrets.AUTH_SERVER }} << EOF
+          cd /home/${{secrets.CD_USERNAME}}/${{github.event.repository.name}}/
+          docker login ghcr.io -u ${{ github.repository_owner }} -p ${{ secrets.TOKEN_CD }}
+          docker pull ghcr.io/${{ github.repository }}:latest
+
+          if docker ps -a --format '{{.Names}}' | grep -w ${{github.event.repository.name}}; then
+            docker stop ${{github.event.repository.name}} && docker rm ${{github.event.repository.name}}
+          fi
+
+          docker run -d \
+            --name ${{github.event.repository.name}} \
+            -p 3000:3000 \
+            -v $(pwd)/keys:/app/keys \
+            -w /app \
+            --restart always \
+            --env-file .env \
+            ghcr.io/${{ github.repository }}:latest
