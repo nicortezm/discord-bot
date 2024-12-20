@@ -19,5 +19,5 @@ export interface Event<T extends keyof ClientEvents> {
   name: T;
   rest?: boolean;
   once?: boolean;
-  execute: (client: GlobClient, ...args: ClientEvents[T]) => void;
+  execute: (..._args: any) => void;
 }
