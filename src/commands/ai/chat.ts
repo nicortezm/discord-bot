@@ -49,7 +49,7 @@ export const command: Command = {
         .setDescription(resp || "no respondió") // respuesta ngrok
         .setColor("Aqua");
 
-      return ctx.sendMessage({ embeds: [embedResponse], ephemeral: true });
+      return ctx.sendMessage({ embeds: [embedResponse], ephemeral: false });
     } catch (error) {
       console.log(error);
       //TODO: Winston
