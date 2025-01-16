@@ -1,10 +1,11 @@
 import { Event } from '../../interfaces';
 import { handleButtons, handleCommands } from '../../handlers';
-import { ActivityType, PresenceData } from 'discord.js';
+import { ActivityType } from 'discord.js';
+import { GlobClient } from '../../interfaces';
 export const event: Event<'ready'> = {
   name: 'ready',
   once: true,
-  execute(client) {
+  execute(client: GlobClient) {
     console.log(`[CLIENT] ${client.user.username} is online`);
 
     client.user.setPresence({

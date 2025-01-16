@@ -13,26 +13,34 @@ export const command: Command = {
     .setContexts(InteractionContextType.Guild),
 
   async execute(client, ctx) {
-    await ctx.sendDeferMessage({ content: "Shuffling..." });
+    const player = client.manager?.getPlayer(ctx.interaction?.guildId!);
 
-    const player = client.manager?.players.get(ctx.interaction?.guildId!);
+    const embed = new EmbedBuilder();
 
-    if (!player?.queue.length && !player?.queue.current) {
-      const embed = new EmbedBuilder()
-        .setColor("Red")
-        .setDescription("No hay canciones en la cola de reproducción");
-      return ctx.sendMessage({ embeds: [embed] });
+    if (!player) {
+      return await ctx.sendMessage({
+        content: "No hay canciones en la cola de reproducción",
+      });
     }
-    const shuffleEmoji = "🔀";
 
-    const embed = new EmbedBuilder()
-      .setDescription(`${shuffleEmoji} Shuffled the queue`)
-      .setColor("Green");
+    if (player.queue.length === 0) {
+      return await ctx.sendMessage({
+        content: "No hay canciones en la cola de reproducción",
+        embeds: [
+          embed.setColor("Red").setDescription("No hay canciones para barajar"),
+        ],
+      });
+    }
 
     player.queue.shuffle();
 
-    return ctx
-      .sendMessage({ embeds: [embed] })
-      .catch((error) => console.log(error));
+    return await ctx.sendMessage({
+      content: "La cola de reproducción ha sido barajada",
+      embeds: [
+        embed
+          .setColor("Green")
+          .setDescription("La cola de reproducción ha sido barajada"),
+      ],
+    });
   },
 };
