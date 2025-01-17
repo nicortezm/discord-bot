@@ -54,8 +54,8 @@ export const command: Command = {
             inline: true,
           },
           {
-            name: "Class / ILVL",
-            value: `${character.name} / ${character.ilvl}`,
+            name: "ILVL / Class",
+            value: `${character.ilvl} / ${character.class}`,
             inline: true,
           },
           {
