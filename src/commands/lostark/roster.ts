@@ -47,8 +47,8 @@ export const command: Command = {
         return;
       }
       // mapear datos
-      data.forEach((character) => {
-        embedResponse.addFields(
+      data.forEach(async (character) => {
+        await embedResponse.addFields(
           {
             name: "Name",
             value: character.name,
