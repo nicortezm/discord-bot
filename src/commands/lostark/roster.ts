@@ -1,5 +1,6 @@
 import { EmbedBuilder, SlashCommandBuilder } from "discord.js";
 import { Command, Character } from "../../interfaces";
+import { classesMap } from "../../lib/lostark/classes";
 
 export const command: Command = {
   data: new SlashCommandBuilder()
@@ -55,7 +56,9 @@ export const command: Command = {
           },
           {
             name: "ILVL / Class",
-            value: `${character.ilvl} / ${character.class}`,
+            value: `${Math.round(character.ilvl * 100) / 100} / ${
+              classesMap[character.class]
+            }`,
             inline: true,
           },
           {
