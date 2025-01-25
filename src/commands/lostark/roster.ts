@@ -1,6 +1,6 @@
 import { EmbedBuilder, SlashCommandBuilder } from "discord.js";
-import { Command, Character } from "../../interfaces";
-import { classesMap } from "../../lib/lostark/classes";
+import { Command } from "../../interfaces";
+import { LostArkAPI } from "../../lib/lostark/apisLA";
 
 export const command: Command = {
   data: new SlashCommandBuilder()
@@ -17,6 +17,7 @@ export const command: Command = {
       ?.value as string;
     const messageOption = toCamelCase(messageOptstring);
     await ctx.sendDeferMessage({});
+    const lostArkApi = new LostArkAPI();
     const embedResponse = new EmbedBuilder()
       .setTitle("Roster Info")
       .setFooter({
@@ -25,18 +26,9 @@ export const command: Command = {
       })
       .setColor("Aqua");
     try {
-      // Validar que el mensaje no contenga espacios
-      const url = `https://uwuowo.mathi.moe/api/roster/NAE/${messageOption}`;
-      const opts: RequestInit = {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      };
-      const api = await fetch(url, opts);
-      const data = (await api.json()) as Character[];
+      const roster = await lostArkApi.roster(messageOption);
 
-      if (data.length === 0) {
+      if (!roster) {
         embedResponse.setDescription("No se encontró el personaje");
         await ctx.editMessage({ embeds: [embedResponse] });
         return;
@@ -48,24 +40,16 @@ export const command: Command = {
 
       // mapear datos
 
-      const enhancedRoster = data.map((character) => {
-        return {
-          name: character.name,
-          lastUpdate: `<t:${Math.floor(
-            new Date(character.lastUpdate).getTime() / 1000
-          )}:R>`,
-          class: classesMap[character.class],
-          ilvl: Math.round(character.ilvl * 100) / 100,
-        };
-      });
-
-      for (let i = 0; i < enhancedRoster.length; i += maxFieldsPerEmbed) {
-        const chunk = enhancedRoster.slice(i, i + maxFieldsPerEmbed);
+      for (let i = 0; i < roster.length; i += maxFieldsPerEmbed) {
+        const chunk = roster.slice(i, i + maxFieldsPerEmbed);
 
         const embed = new EmbedBuilder()
           .setTitle(`Roster Info - ${Math.floor(i / maxFieldsPerEmbed) + 1}`)
           .setColor(0x1f8b4c)
-          .setTimestamp();
+          .setFooter({
+            text: "Respuesta generada",
+            iconURL: "https://cdn3.emoji.gg/emojis/1779_check.png",
+          });
 
         chunk.forEach((char) => {
           embed.addFields([
@@ -81,8 +65,6 @@ export const command: Command = {
 
         embeds.push(embed);
       }
-
-      // Crear un embed
 
       await ctx.editMessage({ embeds: embeds });
     } catch (error) {
