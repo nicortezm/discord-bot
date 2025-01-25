@@ -63,7 +63,11 @@ export class LostArkAPI {
       const engravings = data.engravings.map((engravingId) => {
         return getAbilityName(engravingId);
       });
-
+      if (!data.arkPassiveEnabled) {
+        return {
+          engravings,
+        };
+      }
       const evolution = data.arkPassiveData.evolution.map((group) => {
         return getArkPassiveInfo(group.id, group.lv);
       });
@@ -74,12 +78,14 @@ export class LostArkAPI {
       const leap = data.arkPassiveData.leap.map((group) => {
         return getArkPassiveInfo(group.id, group.lv);
       });
+
       return {
         engravings,
         arkPassiveEnabled: data.arkPassiveEnabled,
         arkpassive: { evolution, enlightenment, leap },
       };
     } catch (error) {
+      console.log(error);
       return;
     }
   }
