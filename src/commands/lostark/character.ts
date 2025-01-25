@@ -21,7 +21,7 @@ export const command: Command = {
     //DI?
     const lostArkApi = new LostArkAPI();
     const embedResponse = new EmbedBuilder()
-      .setTitle("Character Info")
+      .setTitle("Character Details")
       .setFooter({
         text: "Respuesta generada",
         iconURL: "https://cdn3.emoji.gg/emojis/1779_check.png",
@@ -29,26 +29,32 @@ export const command: Command = {
       .setColor("Aqua");
     try {
       //
-      const roster = await lostArkApi.character(messageOption);
-
+      const character = await lostArkApi.character(messageOption);
       // mapear datos
-      if (roster === undefined) {
+      if (character === undefined) {
         embedResponse.setDescription("No se encontró el personaje");
+        await ctx.editMessage({ embeds: [embedResponse] });
+        return;
+      }
+      if (character.engravings.length === 0) {
+        embedResponse.setDescription(
+          "El personaje tiene mas de 5 engravings. Actualmente no se pueden mostrar"
+        );
         await ctx.editMessage({ embeds: [embedResponse] });
         return;
       }
       // Crear un embed
       embedResponse.addFields({
         name: "Engravings",
-        value: roster.engravings.map((eng) => `${eng}`).join("\n"),
+        value: character.engravings.map((eng) => `${eng}`).join("\n"),
       });
-      if (roster.arkPassiveEnabled) {
+      if (character.arkPassiveEnabled) {
         embedResponse.addFields(
           {
             name: "Ark Passive",
             value:
               "**[Enlightenment]**\n" +
-              roster.arkpassive.enlightenment
+              character.arkpassive.enlightenment
                 .map((ap) => `${ap.name} Lv. ${ap.level}`)
                 .join("\n"),
             inline: true,
@@ -57,7 +63,7 @@ export const command: Command = {
             name: "--",
             value:
               "**[Evolution]**\n" +
-              roster.arkpassive.evolution
+              character.arkpassive.evolution
                 .map((ap) => `${ap.name} Lv. ${ap.level}`)
                 .join("\n"),
             inline: true,
@@ -66,7 +72,7 @@ export const command: Command = {
             name: "--",
             value:
               "**[Leap]**\n" +
-              roster.arkpassive.leap
+              character.arkpassive.leap
                 .map((ap) => `${ap.name} Lv. ${ap.level}`)
                 .join("\n"),
             inline: true,
