@@ -11,9 +11,9 @@ export class LostArkAPI {
   private mathiURL = "https://uwuowo.mathi.moe/api";
   private inspectURL = "https://api.snow.xyz/inspect";
 
-  async roster(name: string) {
+  async roster(name: string, region: string = "NAE") {
     // Implementation
-    const url = `${this.mathiURL}/roster/NAE/${name}`;
+    const url = `${this.mathiURL}/roster/${region}/${name}`;
     const opts: RequestInit = {
       method: "GET",
       headers: {

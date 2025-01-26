@@ -5,17 +5,32 @@ import { LostArkAPI } from "../../lib/lostark/apisLA";
 export const command: Command = {
   data: new SlashCommandBuilder()
     .setName("roster")
-    .setDescription("Obtiene el roster de un personaje de Lost Ark (NAE)")
+    .setDescription(
+      "Obtiene el roster de un personaje de Lost Ark (default NAE)"
+    )
     .addStringOption((opt) =>
       opt
         .setName("personaje")
         .setDescription("Nombre del personaje en lost ark")
         .setRequired(true)
+    )
+    .addStringOption((opt) =>
+      opt
+        .setName("region")
+        .setDescription("región del personaje")
+        .setRequired(true)
+        .setChoices([
+          { name: "NAE", value: "NAE" },
+          { name: "NAW", value: "NAW" },
+          { name: "CE", value: "CE" },
+        ])
     ),
   async execute(client, ctx) {
     const messageOptstring = ctx.options.get("personaje", true)
       ?.value as string;
+    const regionOptstring = ctx.options.get("region", true)?.value as string;
     const messageOption = toCamelCase(messageOptstring);
+    const regionOption = regionOptstring;
     await ctx.sendDeferMessage({});
     const lostArkApi = new LostArkAPI();
     const embedResponse = new EmbedBuilder()
@@ -26,7 +41,7 @@ export const command: Command = {
       })
       .setColor("Aqua");
     try {
-      const roster = await lostArkApi.roster(messageOption);
+      const roster = await lostArkApi.roster(messageOption, regionOption);
 
       if (!roster) {
         embedResponse.setDescription("No se encontró el personaje");
