@@ -36,52 +36,52 @@ export const command: Command = {
     const embedResponse = new EmbedBuilder()
       .setTitle("Roster Info")
       .setFooter({
-        text: "Respuesta generada",
-        iconURL: "https://cdn3.emoji.gg/emojis/1779_check.png",
+        text: "En mantenimiento",
+        iconURL: "https://cdn3.emoji.gg/emojis/3179-maintenance.png",
       })
-      .setColor("Aqua");
+      .setColor("Random");
     try {
-      const roster = await lostArkApi.roster(messageOption, regionOption);
+      // const roster = await lostArkApi.roster(messageOption, regionOption);
 
-      if (!roster) {
-        embedResponse.setDescription("No se encontró el personaje");
-        await ctx.editMessage({ embeds: [embedResponse] });
-        return;
-      }
+      // if (!roster) {
+      //   embedResponse.setDescription("No se encontró el personaje");
+      //   await ctx.editMessage({ embeds: [embedResponse] });
+      //   return;
+      // }
 
-      // Constantes para tabla
-      const maxFieldsPerEmbed = 15; // Límite de fields por embed
-      const embeds: EmbedBuilder[] = [];
+      // // Constantes para tabla
+      // const maxFieldsPerEmbed = 15; // Límite de fields por embed
+      // const embeds: EmbedBuilder[] = [];
 
-      // mapear datos
+      // // mapear datos
 
-      for (let i = 0; i < roster.length; i += maxFieldsPerEmbed) {
-        const chunk = roster.slice(i, i + maxFieldsPerEmbed);
+      // for (let i = 0; i < roster.length; i += maxFieldsPerEmbed) {
+      //   const chunk = roster.slice(i, i + maxFieldsPerEmbed);
 
-        const embed = new EmbedBuilder()
-          .setTitle(`Roster Info - ${Math.floor(i / maxFieldsPerEmbed) + 1}`)
-          .setColor(0x1f8b4c)
-          .setFooter({
-            text: "Respuesta generada",
-            iconURL: "https://cdn3.emoji.gg/emojis/1779_check.png",
-          });
+      //   const embed = new EmbedBuilder()
+      //     .setTitle(`Roster Info - ${Math.floor(i / maxFieldsPerEmbed) + 1}`)
+      //     .setColor(0x1f8b4c)
+      //     .setFooter({
+      //       text: "Respuesta generada",
+      //       iconURL: "https://cdn3.emoji.gg/emojis/1779_check.png",
+      //     });
 
-        chunk.forEach((char) => {
-          embed.addFields([
-            {
-              name: char.name,
-              value: `**ILVL:** ${char.ilvl.toFixed(2)}\n**Class:** ${
-                char.class
-              }\n**Last Update:** ${char.lastUpdate}`,
-              inline: true,
-            },
-          ]);
-        });
+      //   chunk.forEach((char) => {
+      //     embed.addFields([
+      //       {
+      //         name: char.name,
+      //         value: `**ILVL:** ${char.ilvl.toFixed(2)}\n**Class:** ${
+      //           char.class
+      //         }\n**Last Update:** ${char.lastUpdate}`,
+      //         inline: true,
+      //       },
+      //     ]);
+      //   });
 
-        embeds.push(embed);
-      }
+      //   embeds.push(embed);
+      // }
 
-      await ctx.editMessage({ embeds: embeds });
+      await ctx.editMessage({ embeds: [embedResponse] });
     } catch (error) {
       console.log(error);
       //TODO: Winston
