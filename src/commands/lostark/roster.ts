@@ -36,52 +36,58 @@ export const command: Command = {
     const embedResponse = new EmbedBuilder()
       .setTitle("Roster Info")
       .setFooter({
-        text: "En mantenimiento",
-        iconURL: "https://cdn3.emoji.gg/emojis/3179-maintenance.png",
+        text: "Respuesta Generada",
+        iconURL: "https://cdn3.emoji.gg/emojis/1779_check.png",
       })
       .setColor("Random");
     try {
-      // const roster = await lostArkApi.roster(messageOption, regionOption);
+      const data = await lostArkApi.roster(messageOption, regionOption);
 
-      // if (!roster) {
-      //   embedResponse.setDescription("No se encontró el personaje");
-      //   await ctx.editMessage({ embeds: [embedResponse] });
-      //   return;
-      // }
+      if (!data) {
+        embedResponse.setDescription("No se encontró el personaje");
+        await ctx.editMessage({ embeds: [embedResponse] });
+        return;
+      }
+      const roster = data.roster;
 
-      // // Constantes para tabla
-      // const maxFieldsPerEmbed = 15; // Límite de fields por embed
-      // const embeds: EmbedBuilder[] = [];
+      // Constantes para tabla
+      const maxFieldsPerEmbed = 15; // Límite de fields por embed
+      const embeds: EmbedBuilder[] = [];
+      const totalPages = Math.ceil(roster.length / maxFieldsPerEmbed);
+      // mapear datos
 
-      // // mapear datos
+      for (let i = 0; i < roster.length; i += maxFieldsPerEmbed) {
+        const chunk = roster.slice(i, i + maxFieldsPerEmbed);
+        const currentPage = Math.floor(i / maxFieldsPerEmbed) + 1; // Página actual
+        const embed = new EmbedBuilder()
+          .setTitle(`Roster Info: ${messageOption}`)
+          .setColor(0x1f8b4c)
+          .setFooter({
+            text: `Page ${currentPage}/${totalPages}`,
+            iconURL: "https://cdn3.emoji.gg/emojis/1779_check.png",
+          });
+        if (currentPage == 1) {
+          embed.setDescription(
+            `**Server:** ${data.header.world} \n**Stronghold:** ${data.header.stronghold} \n**Roster Lvl:** ${data.header.rosterLevel}\n\n**—**`
+          );
+        }
 
-      // for (let i = 0; i < roster.length; i += maxFieldsPerEmbed) {
-      //   const chunk = roster.slice(i, i + maxFieldsPerEmbed);
+        chunk.forEach((char) => {
+          embed.addFields([
+            {
+              name: char.name,
+              value: `**ILVL:** ${char.ilvl.toFixed(2)}\n**Class:** ${
+                char.class
+              }\n**Last Update:** ${char.lastUpdate}`,
+              inline: true,
+            },
+          ]);
+        });
 
-      //   const embed = new EmbedBuilder()
-      //     .setTitle(`Roster Info - ${Math.floor(i / maxFieldsPerEmbed) + 1}`)
-      //     .setColor(0x1f8b4c)
-      //     .setFooter({
-      //       text: "Respuesta generada",
-      //       iconURL: "https://cdn3.emoji.gg/emojis/1779_check.png",
-      //     });
+        embeds.push(embed);
+      }
 
-      //   chunk.forEach((char) => {
-      //     embed.addFields([
-      //       {
-      //         name: char.name,
-      //         value: `**ILVL:** ${char.ilvl.toFixed(2)}\n**Class:** ${
-      //           char.class
-      //         }\n**Last Update:** ${char.lastUpdate}`,
-      //         inline: true,
-      //       },
-      //     ]);
-      //   });
-
-      //   embeds.push(embed);
-      // }
-
-      await ctx.editMessage({ embeds: [embedResponse] });
+      await ctx.editMessage({ embeds: embeds });
     } catch (error) {
       console.log(error);
       //TODO: Winston

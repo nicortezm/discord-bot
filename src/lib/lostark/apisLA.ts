@@ -1,44 +1,30 @@
 import { Character, CharacterData } from "../../interfaces";
-import { classesMap } from "./classes";
-import Abilities from "../../lib/lostark/Ability.json";
-import ArkPassives from "../../lib/lostark/ArkPassives.json";
 import { getAbilityName } from "./parseEngravings";
 import { getArkPassiveInfo } from "./parseAP";
-
+import { DataTransformer, InputData } from "./parseJsonMathi";
 export class LostArkAPI {
   // DI
   constructor() {}
-  private mathiURL = "https://uwuowo.mathi.moe/api";
+  private mathiURL = "https://uwuowo.mathi.moe/character";
   private inspectURL = "https://api.snow.xyz/inspect";
 
   async roster(name: string, region: string = "NAE") {
     // Implementation
-    const url = `${this.mathiURL}/roster/${region}/${name}`;
-    const opts: RequestInit = {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    };
-    const api = await fetch(url, opts);
-    const data = (await api.json()) as Character[];
-    if (data.length === 0) {
+    try {
+      const url = `${this.mathiURL}/${region}/${name}/roster/__data.json`;
+      const opts: RequestInit = {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      };
+      const api = await fetch(url, opts);
+      const data = (await api.json()) as InputData;
+      const transformed = DataTransformer.transform(data);
+      return transformed;
+    } catch (error) {
       return;
     }
-
-    // noptsd
-    const enhancedRoster = data.map((character) => {
-      return {
-        name: character.name,
-        lastUpdate: `<t:${Math.floor(
-          new Date(character.lastUpdate).getTime() / 1000
-        )}:R>`,
-        class: classesMap[character.class],
-        ilvl: Math.round(character.ilvl * 100) / 100,
-      };
-    });
-
-    return enhancedRoster;
   }
 
   async character(name: string) {
@@ -91,25 +77,6 @@ export class LostArkAPI {
   }
   async singleRoster(name: string) {
     // Implementation
-    const url = `${this.mathiURL}/character/NAE/${name}`;
-    const opts: RequestInit = {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    };
-    const api = await fetch(url, opts);
-    const data = (await api.json()) as Character;
-
-    // puede venir vacio
-    if (!data) {
-      return;
-    }
-
-    return {
-      name: data.name,
-      class: classesMap[data.class],
-      ilvl: Math.round(data.ilvl * 100) / 100,
-    };
+    return "Not implemented yet";
   }
 }
